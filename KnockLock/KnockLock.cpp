@@ -14,16 +14,17 @@ void KnockLock::initialize() {
 
 void KnockLock::playback() {
     for (unsigned char i = 0; i < patternSize; i++) {
-        for (unsigned int j = 0; j < 10; j++) {
-            digitalWrite(buzzerPin, HIGH);
-            delay(10);
-            digitalWrite(buzzerPin, LOW);
-        }
-        delay(pattern[i] * 10);
+        bip();
+        delay(pattern[i] * 5);
     }
-    for (unsigned int j = 0; j < 10; j++) {
+    bip();
+}
+
+void KnockLock::bip(unsigned int duration) {
+    unsigned int iterrations = duration / KNOCK_LOCK_BIP_FREQUENCY;
+    for (unsigned int j = 0; j < iterrations; j++) {
         digitalWrite(buzzerPin, HIGH);
-        delay(10);
+        delay(KNOCK_LOCK_BIP_FREQUENCY);
         digitalWrite(buzzerPin, LOW);
     }
 }
@@ -100,7 +101,6 @@ bool KnockLock::doKnocksMatchPattern() {
     int timeMissmatch = 0;
     for (int i = 0; i < patternSize; i++) {
         timeMissmatch = abs(((int)knocks[i]) - pattern[i]);
-        Serial.println(timeMissmatch);
         if (timeMissmatch > KNOCK_LOCK_TIME_MISSMATCH_THRESHOLD) {
             return false;
         }

@@ -12,6 +12,7 @@
 #define KNOCK_LOCK_PATTERN_SAVED_BLINKS                     3
 #define KNOCK_LOCK_TIME_MISSMATCH_THRESHOLD                 25
 #define KNOCK_LOCK_AVG_TIME_MISSMATCH_THRESHOLD             15
+#define KNOCK_LOCK_BIP_FREQUENCY                            10
 
 class KnockLock {
 
@@ -47,9 +48,11 @@ public:
 
     void initialize();
 
+    bool listen(unsigned long timeout = 0);
+
     void playback();
 
-    bool listen(unsigned long timeout = 0);
+    void bip(unsigned int duration = 100);
 
 private:
 
