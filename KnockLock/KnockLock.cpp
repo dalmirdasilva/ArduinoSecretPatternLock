@@ -70,26 +70,27 @@ void KnockLock::processKnocks() {
 }
 
 void KnockLock::normalizeKnocks() {
-    unsigned int maxPatternTime = 0;
+    unsigned int maxKnockTime = 0;
     for (int i = 0; i < knocksSize; i++) {
-        if (knocks[i] > maxPatternTime) {
-            maxPatternTime = knocks[i];
+        if (knocks[i] > maxKnockTime) {
+            maxKnockTime = knocks[i];
         }
     }
     for (int i = 0; i < knocksSize; i++) {
-        knocks[i] = map(knocks[i], 0, maxPatternTime, 0, KNOCK_LOCK_NORMALIZATION_LENGTH);
+        knocks[i] = map(knocks[i], 0, maxKnockTime, 0, KNOCK_LOCK_NORMALIZATION_LENGTH);
     }
 }
 
 bool KnockLock::validateKnocks() {
-    normalizeKnocks();
     if (knocksSize == 0) {
         return false;
     }
+    normalizeKnocks();
     if (isInProgramMode()) {
         savePattern();
         return false;
     }
+    // Need be checked after isInProgramMode
     if (knocksSize != patternSize) {
         return false;
     }
@@ -160,9 +161,9 @@ void KnockLock::loadPattern() {
 
 void KnockLock::savePattern() {
     storage->seek(0);
-    storage->writeUnsignedChar(knocksSize);
+    storage->writeUnsignedChar(knocksSize & 0xff);
     for (int i = 0; i < knocksSize; i++) {
-        storage->writeUnsignedChar(knocks[i]);
+        storage->writeUnsignedChar(knocks[i] & 0xff);
         pattern[i] = knocks[i];
     }
     patternSize = knocksSize;
